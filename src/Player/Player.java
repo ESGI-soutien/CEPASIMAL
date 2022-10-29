@@ -1,28 +1,24 @@
 package Player;
 
+import Attack.Attack;
+
 public class Player {
 
-  private String name;
+  private final String name;
   private int HP;
-  private String attackName;
-  private int attackDamage;
+  private final Attack attack;
 
-  public Player(String name, int HP, String attackName, int attackDamage) {
+  public Player(String name, int HP) {
     this.name = name;
     this.HP = HP;
-    this.attackName = attackName;
-    this.attackDamage = attackDamage;
+    this.attack = new Attack("Punch", -25);
   }
 
   @Override
   public String toString() {
     return "Name: " + getName() + "\n" +
       "HP: " + getHP() + "\n" +
-      "Attack: " + getAttackName() + "\n";
-  }
-
-  public String getAttackName() {
-    return attackName;
+      "Attack: " + this.attack.getName() + "\n";
   }
 
   public int getHP() {
@@ -30,22 +26,27 @@ public class Player {
   }
 
   public void setHP(int HP) {
-    this.HP -= HP;
+    this.HP = HP;
+  }
+
+  public void updateHP(int HP) {
+    this.HP += HP;
   }
 
   public String getName() {
     return name;
   }
 
-  public void attack(Player player) {
-    player.setHP(attackDamage);
-    
-    printAttackString(player);
+  public Attack getAttack() {
+    return attack;
   }
 
-  private void printAttackString(Player player){
-    System.out.println(getName() + " attacks " + player.name + " with " + getAttackName() + "!");
-    System.out.println("It deals " + attackDamage + " damages!" + "\n");
+  public void attack(Player victim) {
+    if (victim == null) return;
+    if (victim.getHP() <= 0) return;
+
+    victim.updateHP(attack.getDamage());
+    if (victim.getHP() < 0) victim.setHP(0);
   }
 
 }
