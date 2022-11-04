@@ -11,14 +11,14 @@ public class Player {
   public Player(String name, int HP) {
     this.name = name;
     this.HP = HP;
-    this.attack = new Attack("Punch", -25);
+    this.attack = new Attack("Punch", 25);
   }
 
   @Override
   public String toString() {
     return "Name: " + getName() + "\n" +
       "HP: " + getHP() + "\n" +
-      "Attack: " + this.attack.getName() + "\n";
+      "Attack: " + getAttack().getName() + "\n";
   }
 
   public int getHP() {
@@ -27,10 +27,6 @@ public class Player {
 
   public void setHP(int HP) {
     this.HP = HP;
-  }
-
-  public void updateHP(int HP) {
-    this.HP += HP;
   }
 
   public String getName() {
@@ -45,7 +41,7 @@ public class Player {
     if (victim == null) return;
     if (victim.getHP() <= 0) return;
 
-    victim.updateHP(attack.getDamage());
+    victim.setHP(victim.getHP() - attack.getDamage());
     if (victim.getHP() < 0) victim.setHP(0);
   }
 
