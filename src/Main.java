@@ -22,9 +22,9 @@ public class Main {
   static void printAttackStrings(Player attacker, Player victim) {
     System.out.println(attacker.getName() + " attacks " + victim.getName() + " with " + attacker.getAttack().getName() + "!");
 
-    int damages = attacker.getAttack().getDamage();
-    int absoluteDamages = damages > 0 ? damages : -1 * damages;
-    System.out.println("It deals " + absoluteDamages + " damages!" + "\n");
+    final int attackDamage = attacker.getAttack().getDamage();
+    final int absoluteAttackDamage = attackDamage >= 0 ? attackDamage : -1 * attackDamage;
+    System.out.println("It deals " + absoluteAttackDamage + " damages!" + "\n");
   }
 
 }
