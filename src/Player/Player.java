@@ -2,23 +2,31 @@ package Player;
 
 import Attack.Attack;
 
+import java.util.List;
+
 public class Player {
 
   private final String name;
   private int HP;
-  private final Attack attack;
+  private final List<Attack> attacks;
 
-  public Player(String name, int HP) {
+  public Player(String name, int HP, List<Attack> attacks) {
     this.name = name;
     this.HP = HP;
-    this.attack = new Attack("Punch", 25);
+    this.attacks = attacks;
   }
 
   @Override
   public String toString() {
-    return "Name: " + getName() + "\n" +
-      "HP: " + getHP() + "\n" +
-      "Attack: " + getAttack().getName() + "\n";
+    StringBuilder sb = new StringBuilder();
+    sb.append("Name: " + getName() + "\n" +
+      "HP: " + getHP() + "\n");
+
+    for (int i = 0; i < getAttacks().size(); i++) {
+      sb.append("Attack " + (i + 1) + ": " + getAttacks().get(i).getName() + "\n");
+    }
+
+    return sb.toString();
   }
 
   public int getHP() {
@@ -33,11 +41,11 @@ public class Player {
     return name;
   }
 
-  public Attack getAttack() {
-    return attack;
+  public List<Attack> getAttacks() {
+    return attacks;
   }
 
-  public void attack(Player victim) {
+  public void attack(Player victim, Attack attack) {
     if (victim == null) return;
     if (victim.getHP() <= 0) return;
 
