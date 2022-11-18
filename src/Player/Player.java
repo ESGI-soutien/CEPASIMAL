@@ -10,7 +10,7 @@ public class Player {
   private int HP;
   private final List<Attack> attacks;
 
-  public Player(String name, int HP, List<Attack> attacks) {
+  public Player(final String name, final int HP, final List<Attack> attacks) {
     this.name = name;
     this.HP = HP;
     this.attacks = attacks;
@@ -45,7 +45,7 @@ public class Player {
     return attacks;
   }
 
-  public void attack(Player victim, Attack attack) {
+  public void attack(final Player victim, final Attack attack) {
     if (victim == null) return;
     if (victim.getHP() <= 0) return;
 

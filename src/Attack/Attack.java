@@ -4,7 +4,7 @@ public class Attack {
   private final String name;
   private final int damage;
 
-  public Attack(String attackName, int attackDamage) {
+  public Attack(final String attackName, final int attackDamage) {
     this.name = attackName;
     this.damage = attackDamage;
   }
