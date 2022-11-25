@@ -41,13 +41,11 @@ public class Main {
     int turnCounter = 1;
     Player currentPlayer;
     Player otherPlayer;
-    final List<String> actions = List.of("Flee", "Analyze", "Attack");
-    final List<Player> players = List.of(p1, p2);
-
     Player winner = null;
+    final List<String> actions = List.of("Flee", "Analyze", "Attack");
 
     while (!isGameOver) {
-      printPlayersInfo(players);
+      printPlayersInfo(List.of(p1, p2));
 
       if (turnCounter % 2 == 1) {
         currentPlayer = p1;
