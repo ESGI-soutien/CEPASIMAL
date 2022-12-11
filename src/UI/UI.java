@@ -33,6 +33,10 @@ public class UI {
     System.out.println("❌ Fight impossible.");
   }
 
+  public static void printNoPotion() {
+    System.out.println("No more potions.\n");
+  }
+
   public static void printPlayerAttacks(final Player player) {
     StringBuilder attackSb = new StringBuilder();
 
@@ -76,4 +80,5 @@ public class UI {
   public static void printException(final Exception ex) {
     System.out.println("An error occurred: " + ex.getMessage() + "\n");
   }
+
 }

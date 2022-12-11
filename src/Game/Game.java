@@ -1,6 +1,7 @@
 package Game;
 
 import Player.Player;
+import Player.AttackResult;
 
 import java.util.List;
 import java.util.Scanner;
@@ -27,22 +28,15 @@ public class Game {
   private void handleTurns(Player p1, Player p2) {
     Boolean isAnyPlayerDead = p1.getHP() <= 0 || p2.getHP() <= 0;
     Boolean isGameOver = isAnyPlayerDead;
-    int turnCounter = 1;
-    Player currentPlayer;
-    Player otherPlayer;
+
+    Player currentPlayer = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
+    Player otherPlayer = currentPlayer == p1 ? p2 : p1;
+    Player tempPlayer;
     Player winner = null;
-    final List<String> actions = List.of("Flee", "Analyze", "Attack");
+    final List<String> actions = List.of("Flee", "Analyze", "Attack", "Heal");
 
     while (!isGameOver) {
       printPlayersInfo(List.of(p1, p2));
-
-      if (turnCounter % 2 == 1) {
-        currentPlayer = p1;
-        otherPlayer = p2;
-      } else {
-        currentPlayer = p2;
-        otherPlayer = p1;
-      }
 
       final Scanner scanner = new Scanner(System.in);
       int choice;
@@ -62,12 +56,22 @@ public class Game {
         } else if (choice == 1) {
           printPlayerInfo(otherPlayer);
           continue;
+        } else if (choice == 3) {
+          if (currentPlayer.getRemainingPotionQuantity() <= 0) {
+            printNoPotion();
+          } else {
+            currentPlayer.drinkPotion();
+          }
+
+          continue;
         }
 
         printPlayerAttacks(currentPlayer);
 
         if (currentPlayer.getAttacks().size() == 0) {
-          turnCounter++;
+          tempPlayer = currentPlayer;
+          currentPlayer = otherPlayer;
+          otherPlayer = tempPlayer;
           continue;
         }
 
@@ -77,8 +81,16 @@ public class Game {
           continue;
         }
 
-        currentPlayer.attack(otherPlayer, currentPlayer.getAttacks().get(choice - 1));
-        turnCounter++;
+        AttackResult attackResult = currentPlayer.attack(currentPlayer, choice, otherPlayer);
+        if (attackResult == AttackResult.CRITICAL) {
+          System.out.println("Critical strike!");
+        } else if (attackResult == AttackResult.FAILURE) {
+          System.out.println("The attack failed.");
+        }
+
+        tempPlayer = currentPlayer;
+        currentPlayer = otherPlayer;
+        otherPlayer = tempPlayer;
       } catch (Exception e) {
         printException(e);
       }
