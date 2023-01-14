@@ -1,5 +1,6 @@
 package UI;
 
+import Attack.Attack;
 import Player.Player;
 
 import java.util.List;
@@ -11,7 +12,9 @@ public class UI {
 
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < actions.size(); i++) {
-      sb.append(i + ": " + actions.get(i) + " \n");
+      sb
+        .append(actions.get(i))
+        .append(" \n");
     }
 
     System.out.println(sb);
@@ -24,6 +27,14 @@ public class UI {
 //    final int absoluteAttackDamage = attackDamage >= 0 ? attackDamage : -1 * attackDamage;
 //    System.out.println("It deals " + absoluteAttackDamage + " damages!" + "\n");
 //  }
+
+  public static void printCriticalStrike() {
+    System.out.println("Critical strike!");
+  }
+
+  public static void printFailedAttack() {
+    System.out.println("The attack failed.");
+  }
 
   public static void printInvalidChoice(final Player currentPlayer) {
     System.out.println("Error: " + currentPlayer.getName() + " needs to make a valid choice!\n");
@@ -38,15 +49,24 @@ public class UI {
   }
 
   public static void printPlayerAttacks(final Player player) {
-    StringBuilder attackSb = new StringBuilder();
+    final StringBuilder attackSb = new StringBuilder();
 
     if (player.getAttacks().size() == 0) {
       attackSb.append("🤷🏼No attacks available. Next turn...\n");
     }
 
-    for (int i = 0; i < player.getAttacks().size(); i++) {
-      attackSb.append((i + 1) + ": " + player.getAttacks().get(i).getName()
-        + " (" + player.getAttacks().get(i).getDamage() + " damage(s))" + "\n");
+//    for (int i = 0; i < player.getAttacks().size(); i++) {
+//      attackSb.append((i + 1) + ": " + player.getAttacks().get(i).getName()
+//        + " (" + player.getAttacks().get(i).getDamage() + " damage(s))" + "\n");
+//    }
+
+    for (Attack attack : player.getAttacks()) {
+      attackSb
+        .append(attack.getName())
+        .append(" (")
+        .append(attack.getDamage())
+        .append(" damage(s))")
+        .append("\n");
     }
 
     System.out.println(attackSb);

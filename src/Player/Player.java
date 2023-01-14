@@ -34,11 +34,14 @@ public class Player {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("Name: " + getName() + "\n" +
-      "HP: " + getHP() + "\n");
+    sb
+      .append("Name: ").append(getName()).append("\n")
+      .append("HP: ").append(getHP()).append("\n");
 
     for (int i = 0; i < getAttacks().size(); i++) {
-      sb.append("Attack " + (i + 1) + ": " + getAttacks().get(i).getName() + "\n");
+      sb
+        .append("Attack ").append(i + 1).append(": ")
+        .append(getAttacks().get(i).getName()).append("\n");
     }
 
     return sb.toString();
@@ -48,7 +51,7 @@ public class Player {
     return HP;
   }
 
-  public void setHP(int HP) {
+  public void setHP(final int HP) {
     this.HP = HP;
   }
 
@@ -68,14 +71,14 @@ public class Player {
     return speed;
   }
 
-  public AttackResult attack(final Player attacker, final int choice, final Player victim) {
+  public AttackResult attack(final Player attacker, final String choice, final Player victim) {
     if (victim == null) return AttackResult.IMPOSSIBLE;
     if (victim.getHP() <= 0) return AttackResult.IMPOSSIBLE;
     if (hasFailed()) return AttackResult.FAILURE;
 
-    boolean isCriticalAttack = isCriticalAttack();
+    final boolean isCriticalAttack = isCriticalAttack();
 
-    int victimHP = computeVictimHP(attacker, choice, isCriticalAttack, victim);
+    final int victimHP = computeVictimHP(attacker, choice, isCriticalAttack, victim);
     victim.setHP(victimHP);
 
     if (isCriticalAttack) return AttackResult.CRITICAL;
@@ -83,11 +86,16 @@ public class Player {
     return AttackResult.NORMAL;
   }
 
-  public int computeVictimHP(Player attacker, int choice, boolean isCriticalAttack, Player victim) {
-    int attackDamage = attacker.getAttacks().get(choice - 1).getDamage();
+  public int computeVictimHP(final Player attacker, final String choice, final boolean isCriticalAttack, final Player victim) {
+//    int attackDamage = attacker.getAttacks().get(choice - 1).getDamage();
+    int attackDamage = 0;
+    for (Attack attack : attacker.getAttacks()) {
+      if (attack.getName().equalsIgnoreCase(choice)) attackDamage = attack.getDamage();
+    }
+      
     if (isCriticalAttack) attackDamage *= 2;
 
-    int victimHP = victim.getHP() - Math.round(attackDamage * attacker.attackBonus * victim.defense);
+    final int victimHP = victim.getHP() - Math.round(attackDamage * attacker.attackBonus * victim.defense);
 
     return Math.max(0, victimHP);
   }
@@ -105,15 +113,12 @@ public class Player {
   }
 
   public void drinkPotion() {
-    if (remainingPotionQuantity <= 0) return;
+    if (this.remainingPotionQuantity <= 0) return;
 
-    int HPAfterDrinking = Math.min(this.HP + 50, 100);
+    final int HPAfterDrinking = Math.min(this.HP + 50, 100);
+
     setHP(HPAfterDrinking);
-    decrementRemainingPotions();
-  }
-
-  public void decrementRemainingPotions() {
-    remainingPotionQuantity--;
+    this.remainingPotionQuantity--;
   }
 
 }

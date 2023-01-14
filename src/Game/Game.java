@@ -2,6 +2,7 @@ package Game;
 
 import Player.Player;
 import Player.AttackResult;
+import Player.PlayerAction;
 
 import java.util.List;
 import java.util.Scanner;
@@ -17,46 +18,50 @@ public class Game {
     return null;
   }
 
-  public Boolean fightBetween(Player p1, Player p2) {
+  public boolean fightBetween(Player p1, Player p2) {
     if (p1 == null || p2 == null) return false;
-    if (p1.getHP() <= 0 || p2.getHP() <= 0) return false;
+    if (getWinner(p1, p2) != null) return false;
 
     handleTurns(p1, p2);
     return true;
   }
 
   private void handleTurns(Player p1, Player p2) {
-    Boolean isAnyPlayerDead = p1.getHP() <= 0 || p2.getHP() <= 0;
-    Boolean isGameOver = isAnyPlayerDead;
+//    boolean isAnyPlayerDead = p1.getHP() <= 0 || p2.getHP() <= 0;
 
     Player currentPlayer = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
     Player otherPlayer = currentPlayer == p1 ? p2 : p1;
     Player tempPlayer;
     Player winner = null;
-    final List<String> actions = List.of("Flee", "Analyze", "Attack", "Heal");
+    final List<String> actions = List.of(
+      PlayerAction.FLEE.getAction(),
+      PlayerAction.ANALYZE.getAction(),
+      PlayerAction.ATTACK.getAction(),
+      PlayerAction.HEAL.getAction()
+    );
 
+    boolean isGameOver = false;
     while (!isGameOver) {
       printPlayersInfo(List.of(p1, p2));
 
       final Scanner scanner = new Scanner(System.in);
-      int choice;
 
       try {
         printActions(currentPlayer, actions);
 
-        choice = scanner.nextInt();
-        if (choice < 0 || choice >= actions.size()) {
+        String choice = scanner.next().trim();
+        if (actions.stream().noneMatch(choice::equalsIgnoreCase)) {
           printInvalidChoice(currentPlayer);
           continue;
-        } else if (choice == 0) {
+        } else if (choice.equalsIgnoreCase(PlayerAction.FLEE.toString())) {
           System.out.println("🏃 " + currentPlayer.getName() + " has run away.");
           winner = otherPlayer;
           printWinner(winner);
           return;
-        } else if (choice == 1) {
+        } else if (choice.equalsIgnoreCase(PlayerAction.ANALYZE.toString())) {
           printPlayerInfo(otherPlayer);
           continue;
-        } else if (choice == 3) {
+        } else if (choice.equalsIgnoreCase(PlayerAction.HEAL.toString())) {
           if (currentPlayer.getRemainingPotionQuantity() <= 0) {
             printNoPotion();
           } else {
@@ -75,17 +80,18 @@ public class Game {
           continue;
         }
 
-        choice = scanner.nextInt();
-        if (choice <= 0 || choice > currentPlayer.getAttacks().size()) {
+        choice = scanner.next().trim();
+        final String attackChoice = choice;
+        if (currentPlayer.getAttacks().stream().noneMatch((attack) -> attack.getName().equalsIgnoreCase(attackChoice))) {
           printInvalidChoice(currentPlayer);
           continue;
         }
 
-        AttackResult attackResult = currentPlayer.attack(currentPlayer, choice, otherPlayer);
+        final AttackResult attackResult = currentPlayer.attack(currentPlayer, choice, otherPlayer);
         if (attackResult == AttackResult.CRITICAL) {
-          System.out.println("Critical strike!");
+          printCriticalStrike();
         } else if (attackResult == AttackResult.FAILURE) {
-          System.out.println("The attack failed.");
+          printFailedAttack();
         }
 
         tempPlayer = currentPlayer;
@@ -95,10 +101,8 @@ public class Game {
         printException(e);
       }
 
-      isAnyPlayerDead = currentPlayer.getHP() <= 0 || otherPlayer.getHP() <= 0;
-      isGameOver = isAnyPlayerDead;
-
-      if (isAnyPlayerDead) {
+      isGameOver = currentPlayer.getHP() <= 0 || otherPlayer.getHP() <= 0;
+      if (isGameOver) {
         winner = getWinner(currentPlayer, otherPlayer);
       }
     }

@@ -19,6 +19,7 @@ public class Main {
       0.3f,
       50
     );
+
     final Player luigi = new Player(
       "Luigi",
       100,
@@ -31,8 +32,8 @@ public class Main {
       70
     );
 
-    Game game = new Game();
-    Boolean hasFightStarted = game.fightBetween(mario, luigi);
+    final Game game = new Game();
+    final boolean hasFightStarted = game.fightBetween(mario, luigi);
     if (!hasFightStarted) printNoFight();
   }
 
