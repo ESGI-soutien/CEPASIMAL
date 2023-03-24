@@ -4,7 +4,8 @@ public enum PlayerAction {
   FLEE("Flee"),
   ANALYZE("Analyze"),
   ATTACK("Attack"),
-  HEAL("Heal");
+  HEAL("Heal"),
+  PASS("Pass");
 
   private String action;
 

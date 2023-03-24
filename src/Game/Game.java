@@ -1,24 +1,26 @@
 package Game;
 
-import Player.Player;
+import Bot.Bot;
+import Fighter.Fighter;
 import Player.AttackResult;
+import Player.Player;
 import Player.PlayerAction;
+import Utils.Utils;
 
 import java.util.List;
-import java.util.Scanner;
 
 import static UI.UI.*;
 
 public class Game {
 
-  private Player getWinner(Player p1, Player p2) {
+  private Fighter getWinner(Fighter p1, Fighter p2) {
     if (p1.getHP() <= 0 && p2.getHP() > 0) return p2;
     if (p2.getHP() <= 0 && p1.getHP() > 0) return p1;
 
     return null;
   }
 
-  public boolean fightBetween(Player p1, Player p2) {
+  public boolean fightBetween(Fighter p1, Fighter p2) {
     if (p1 == null || p2 == null) return false;
     if (getWinner(p1, p2) != null) return false;
 
@@ -26,30 +28,32 @@ public class Game {
     return true;
   }
 
-  private void handleTurns(Player p1, Player p2) {
+  private void handleTurns(Fighter p1, Fighter p2) {
 //    boolean isAnyPlayerDead = p1.getHP() <= 0 || p2.getHP() <= 0;
 
-    Player currentPlayer = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
-    Player otherPlayer = currentPlayer == p1 ? p2 : p1;
-    Player tempPlayer;
-    Player winner = null;
+    Fighter currentPlayer = p1.getSpeed() >= p2.getSpeed() ? p1 : p2;
+    Fighter otherPlayer = currentPlayer == p1 ? p2 : p1;
+    Fighter tempPlayer;
+    Fighter winner = null;
     final List<String> actions = List.of(
       PlayerAction.FLEE.getAction(),
       PlayerAction.ANALYZE.getAction(),
       PlayerAction.ATTACK.getAction(),
-      PlayerAction.HEAL.getAction()
+      PlayerAction.HEAL.getAction(),
+      PlayerAction.PASS.getAction()
     );
 
     boolean isGameOver = false;
     while (!isGameOver) {
       printPlayersInfo(List.of(p1, p2));
 
-      final Scanner scanner = new Scanner(System.in);
+      String choice = "";
 
       try {
         printActions(currentPlayer, actions);
 
-        String choice = scanner.next().trim();
+//        String choice = scanner.next().trim();
+        choice = currentPlayer.makeDecision();
         if (actions.stream().noneMatch(choice::equalsIgnoreCase)) {
           printInvalidChoice(currentPlayer);
           continue;
@@ -60,6 +64,12 @@ public class Game {
           return;
         } else if (choice.equalsIgnoreCase(PlayerAction.ANALYZE.toString())) {
           printPlayerInfo(otherPlayer);
+          continue;
+        } else if (choice.equalsIgnoreCase(PlayerAction.PASS.toString())) {
+          printFighterDoesNothing();
+          tempPlayer = currentPlayer;
+          currentPlayer = otherPlayer;
+          otherPlayer = tempPlayer;
           continue;
         } else if (choice.equalsIgnoreCase(PlayerAction.HEAL.toString())) {
           if (currentPlayer.getRemainingPotionQuantity() <= 0) {
@@ -80,7 +90,14 @@ public class Game {
           continue;
         }
 
-        choice = scanner.next().trim();
+        if (currentPlayer instanceof Player) {
+          choice = Utils.scanner.next().trim();
+        } else if (currentPlayer instanceof Bot) {
+          choice = ((Bot) currentPlayer).chooseAttack();
+          System.out.println(choice);
+        }
+
+
         final String attackChoice = choice;
         if (currentPlayer.getAttacks().stream().noneMatch((attack) -> attack.getName().equalsIgnoreCase(attackChoice))) {
           printInvalidChoice(currentPlayer);
@@ -88,6 +105,7 @@ public class Game {
         }
 
         final AttackResult attackResult = currentPlayer.attack(currentPlayer, choice, otherPlayer);
+
         if (attackResult == AttackResult.CRITICAL) {
           printCriticalStrike();
         } else if (attackResult == AttackResult.FAILURE) {

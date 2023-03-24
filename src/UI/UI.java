@@ -1,13 +1,14 @@
 package UI;
 
 import Attack.Attack;
-import Player.Player;
+import Fighter.Fighter;
+//import Player.Player;
 
 import java.util.List;
 
 public class UI {
 
-  public static void printActions(final Player currentPlayer, final List<String> actions) {
+  public static void printActions(final Fighter currentPlayer, final List<String> actions) {
     System.out.println("➡️ " + currentPlayer.getName() + " is ready to do something...");
 
     final StringBuilder sb = new StringBuilder();
@@ -36,7 +37,7 @@ public class UI {
     System.out.println("The attack failed.");
   }
 
-  public static void printInvalidChoice(final Player currentPlayer) {
+  public static void printInvalidChoice(final Fighter currentPlayer) {
     System.out.println("Error: " + currentPlayer.getName() + " needs to make a valid choice!\n");
   }
 
@@ -48,7 +49,7 @@ public class UI {
     System.out.println("No more potions.\n");
   }
 
-  public static void printPlayerAttacks(final Player player) {
+  public static void printPlayerAttacks(final Fighter player) {
     final StringBuilder attackSb = new StringBuilder();
 
     if (player.getAttacks().size() == 0) {
@@ -72,23 +73,27 @@ public class UI {
     System.out.println(attackSb);
   }
 
-  public static void printPlayerInfo(final Player player) {
+  public static void printPlayerInfo(final Fighter player) {
     System.out.println(player.toString());
   }
 
-  public static void printPlayersInfo(final List<Player> players) {
+  public static void printPlayersInfo(final List<Fighter> players) {
     System.out.println("""
       --------------------------------
       📊 Current players' state:""");
 
-    for (Player player : players) {
+    for (Fighter player : players) {
       System.out.println(player.getName() + ": " + player.getHP() + " HP");
     }
 
     System.out.println("--------------------------------\n");
   }
 
-  public static void printWinner(final Player winner) {
+  public static void printFighterDoesNothing() {
+    System.out.println("The fighter does nothing.");
+  }
+
+  public static void printWinner(final Fighter winner) {
     if (winner == null) {
       System.out.println("🙅🏻There is no winner.");
       return;

@@ -1,31 +1,28 @@
-package Player;
+package Fighter;
 
 import Attack.Attack;
-import Fighter.Fighter;
-import Utils.Utils;
+import Player.AttackResult;
 
 import java.util.List;
 import java.util.Random;
 
-public class Player extends Fighter {
+public abstract class Fighter implements IFighter {
 
-//  private String name;
-//  private HP;
-//  private List<Attack> attacks;
-//  private float attackBonus;
-//  private float defense;
-//  private int speed;
-//  private remainingPotionQuantity = 1;
+  protected String name = null;
+  protected int HP = 100;
+  protected List<Attack> attacks = List.of();
+  protected float attackBonus = 0f;
+  protected float defense = 0f;
+  protected int speed = 0;
+  protected int remainingPotionQuantity = 1;
 
-  public Player(
-    final String name,
-    final int HP,
-    final List<Attack> attacks,
-    final float attackBonus,
-    final float defense,
-    final int speed
-  ) {
-    super(name, HP, attacks, attackBonus, defense, speed);
+  public Fighter(String name, int hp, List<Attack> attacks, float attackBonus, float defense, int speed) {
+    this.name = name;
+    this.HP = hp;
+    this.attacks = attacks;
+    this.attackBonus = attackBonus;
+    this.defense = defense;
+    this.speed = speed;
   }
 
   @Override
@@ -56,14 +53,6 @@ public class Player extends Fighter {
     return name;
   }
 
-  public float getAttackBonus() {
-    return attackBonus;
-  }
-
-  public float getDefense() {
-    return defense;
-  }
-
   public List<Attack> getAttacks() {
     return attacks;
   }
@@ -76,7 +65,7 @@ public class Player extends Fighter {
     return speed;
   }
 
-  public AttackResult attack(final Player attacker, final String choice, final Player victim) {
+  public AttackResult attack(final Fighter attacker, final String choice, final Fighter victim) {
     if (victim == null) return AttackResult.IMPOSSIBLE;
     if (victim.getHP() <= 0) return AttackResult.IMPOSSIBLE;
     if (hasFailed()) return AttackResult.FAILURE;
@@ -91,8 +80,7 @@ public class Player extends Fighter {
     return AttackResult.NORMAL;
   }
 
-  public int computeVictimHP(final Player attacker, final String choice, final boolean isCriticalAttack, final Player victim) {
-//    int attackDamage = attacker.getAttacks().get(choice - 1).getDamage();
+  public int computeVictimHP(final Fighter attacker, final String choice, final boolean isCriticalAttack, final Fighter victim) {
     int attackDamage = 0;
     for (Attack attack : attacker.getAttacks()) {
       if (attack.getName().equalsIgnoreCase(choice)) attackDamage = attack.getDamage();
@@ -124,11 +112,6 @@ public class Player extends Fighter {
 
     setHP(HPAfterDrinking);
     this.remainingPotionQuantity--;
-  }
-
-  @Override
-  public String makeDecision() {
-    return Utils.scanner.next().trim();
   }
 
 }
